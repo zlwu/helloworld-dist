@@ -57,6 +57,6 @@ jobs:
         git init
         git config user.name "bot"
         git config user.email "bot@github.com"
-        git add pw* ssrp
+        git add .
         git commit -m "$TAG$(TZ='Asia/Shanghai' date +@%Y%m%d)"
         git push --force --quiet "https://$GITHUB_TOKEN@github.com/zlwu/helloworld-dist.git" HEAD:$TAG
