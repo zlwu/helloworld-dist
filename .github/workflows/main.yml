@@ -19,7 +19,7 @@ jobs:
         #- https://downloads.openwrt.org/releases/22.03.3/targets/ath79/generic/openwrt-sdk-22.03.3-ath79-generic_gcc-11.2.0_musl.Linux-x86_64.tar.xz
         #- https://downloads.openwrt.org/releases/22.03.3/targets/ath79/nand/openwrt-sdk-22.03.3-ath79-nand_gcc-11.2.0_musl.Linux-x86_64.tar.xz
         - https://downloads.openwrt.org/releases/22.03.3/targets/x86/64/openwrt-sdk-22.03.3-x86-64_gcc-11.2.0_musl.Linux-x86_64.tar.xz
-        #- https://downloads.openwrt.org/releases/22.03.3/targets/rockchip/armv8/openwrt-sdk-22.03.3-rockchip-armv8_gcc-11.2.0_musl.Linux-x86_64.tar.xz
+        - https://downloads.openwrt.org/releases/22.03.3/targets/rockchip/armv8/openwrt-sdk-22.03.3-rockchip-armv8_gcc-11.2.0_musl.Linux-x86_64.tar.xz
     steps:
     - uses: actions/checkout@master
     - name: Env for Openwrt SDK
@@ -42,19 +42,12 @@ jobs:
     - name: Compile
       run: |
         cd ~/sdk
-        echo "CONFIG_PACKAGE_luci-app-ssr-plus=y" >> .config
-        echo "CONFIG_PACKAGE_luci-i18n-ssr-plus-zh-cn=y" >> .config
-        echo "CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_IPT2Socks=y" >> .config
-        echo "CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks=y" >> .config
-        echo "CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks_Rust=y" >> .config
-        echo "CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray_plugin=y" >> .config
-        echo "CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Xray=y" >> .config
-        echo "CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Trojan=y" >> .config
-        echo "CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Redsocks2=y" >> .config
-        echo "CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_NaiveProxy=y" >> .config
-        echo "CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Kcptun=y" >> .config
-        echo "CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Server=y" >> .config
+        # enable all packages
         make defconfig
+        cat .config | grep ssr-plus > my.config
+        sed 's| is not set|=y|g; s|# ||g' my.config > .config
+        make defconfig
+        # build packages
         make package/luci-app-ssr-plus/compile V=s
         make package/index
     - name: Upload
