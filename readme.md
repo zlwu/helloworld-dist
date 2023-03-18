@@ -14,7 +14,7 @@ This project is only for OpenWRT routers. Currently it's based on 2203.
 First, Add the public key [pub-dist.pub](./pub-dist.pub) which is paired with private key [key-build](./key-build) for building.
 
 ```
-wget http://cdn.jsdelivr.net/gh/zlwu/helloworld-dist@master/pub-dist.pub
+wget https://cdn.jsdelivr.net/gh/zlwu/helloworld-dist@master/pub-dist.pub
 opkg-key add pub-dist.pub
 ```
 
@@ -33,13 +33,13 @@ Here means _x86/64_ is your's target, you got **packages/_x86/64_** as **branch 
 Search your branch name in the branches list and add the following line to `/etc/opkg/customfeeds.conf`.
 
 ```
-src/gz simonsmh http://cdn.jsdelivr.net/gh/zlwu/helloworld-dist@{{$BRANCH_NAME}}
+src/gz ssrp https://cdn.jsdelivr.net/gh/zlwu/helloworld-dist@{{$BRANCH_NAME}}
 ```
 
 For example, if you want to use `x86_64` packages and you got the branch name as `packages/x86/64`, You could use this line after the previous step.
 
 ```
-src/gz simonsmh http://cdn.jsdelivr.net/gh/zlwu/helloworld-dist@packages/x86/64
+src/gz ssrp https://cdn.jsdelivr.net/gh/zlwu/helloworld-dist@packages/x86/64
 ```
 
 Then install whatever you want.
@@ -61,7 +61,7 @@ Build configurable images with ImageBuilder after the SDK finished building pack
 [Reference for installation](https://openwrt.org/docs/guide-user/installation/generic.sysupgrade)
 
 ## Build it yourself
-[Check here](https://github.com/simonsmh/openwrt-dist/blob/master/.github/workflows/main.yml)
+[Check here](https://github.com/zlwu/helloworld-dist/blob/master/.github/workflows/main.yml)
 
 You need to make a fork and chage items in the matrix yourself to match your needs. If you need to keep your packages safe, please use `usign` to regenerate private key and make the repo private.
 
