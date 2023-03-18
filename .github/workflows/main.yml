@@ -1,0 +1,196 @@
+name: Openwrt Build Bot
+on:
+  push:
+    branches: master
+  schedule:
+  - cron: 0 0 * * *
+
+jobs:
+  buildpkg:
+    name: Build Openwrt Package
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        SDK_URL:
+        - https://downloads.openwrt.org/releases/22.03.3/targets/ipq806x/generic/openwrt-sdk-22.03.3-ipq806x-generic_gcc-11.2.0_musl_eabi.Linux-x86_64.tar.xz
+        - https://downloads.openwrt.org/releases/22.03.3/targets/ipq40xx/generic/openwrt-sdk-22.03.3-ipq40xx-generic_gcc-11.2.0_musl_eabi.Linux-x86_64.tar.xz
+        - https://downloads.openwrt.org/releases/22.03.3/targets/ramips/mt7621/openwrt-sdk-22.03.3-ramips-mt7621_gcc-11.2.0_musl.Linux-x86_64.tar.xz
+        - https://downloads.openwrt.org/releases/22.03.3/targets/ath79/generic/openwrt-sdk-22.03.3-ath79-generic_gcc-11.2.0_musl.Linux-x86_64.tar.xz
+        - https://downloads.openwrt.org/releases/22.03.3/targets/ath79/nand/openwrt-sdk-22.03.3-ath79-nand_gcc-11.2.0_musl.Linux-x86_64.tar.xz
+        - https://downloads.openwrt.org/releases/22.03.3/targets/x86/64/openwrt-sdk-22.03.3-x86-64_gcc-11.2.0_musl.Linux-x86_64.tar.xz
+        - https://downloads.openwrt.org/releases/22.03.3/targets/rockchip/armv8/openwrt-sdk-22.03.3-rockchip-armv8_gcc-11.2.0_musl.Linux-x86_64.tar.xz
+    steps:
+    - uses: actions/checkout@master
+    - name: Env for Openwrt SDK
+      run: sudo apt install -y libev-dev libc-ares-dev libudns-dev libncurses-dev
+    - name: Download Openwrt SDK
+      env:
+        SDK_URL: ${{ matrix.SDK_URL }}
+      run: |
+        SDK_HOME=$(head -c -8 <<< $(basename $SDK_URL))
+        wget $SDK_URL
+        tar xf $(basename $SDK_URL) -C ~/
+        mv ~/$SDK_HOME ~/sdk
+        cp key-build ~/sdk/
+    - name: Download Packages
+      run: |
+        cd ~/sdk
+        # Shadowsocks
+        git clone -b master https://github.com/shadowsocks/luci-app-shadowsocks package/luci-app-shadowsocks
+        git clone -b master https://github.com/shadowsocks/openwrt-shadowsocks package/shadowsocks-libev
+        git clone -b master https://github.com/aa65535/openwrt-simple-obfs package/simple-obfs
+        # Misc
+        git clone -b master https://github.com/aa65535/openwrt-chinadns package/chinadns
+        git clone -b master https://github.com/aa65535/openwrt-dns-forwarder package/dns-forwarder
+        git clone -b master https://github.com/aa65535/openwrt-dist-luci package/openwrt-dist-luci
+        # Vlmcsd
+        git clone -b master https://github.com/mchome/openwrt-vlmcsd package/vlmcsd
+        git clone -b master https://github.com/mchome/luci-app-vlmcsd package/luci-app-vlmcsd
+        # Clash
+        git clone -b dev https://github.com/vernesong/OpenClash package/openclash
+        # Smartdns
+        git clone -b master https://github.com/pymumu/openwrt-smartdns package/smartdns
+        git clone -b master https://github.com/pymumu/luci-app-smartdns package/luci-app-smartdns
+        sed -i 's|../../luci.mk|$(TOPDIR)/feeds/luci/luci.mk|g; 7iPKG_NAME:=luci-app-smartdns' package/luci-app-smartdns/Makefile
+        # Dependency
+        #git clone -b master https://github.com/shadowsocks/openwrt-feeds package/custom
+        pushd package/openwrt-dist-luci/tools/po2lmo ; make && sudo make install ; popd
+        ./scripts/feeds update -a
+        ./scripts/feeds install golang c-ares libev libopenssl libsodium mbedtls pcre libncursesw6
+    - name: Compile
+      run: |
+        cd ~/sdk
+        make defconfig
+        # Edit config
+        make V=s
+    - name: Upload
+      env:
+        SDK_URL: ${{ matrix.SDK_URL }}
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
+      run: |
+        TAG=$(sed -n 's/.*targets\/\(\w*\)\/\(\w*\)\/.*/packages\/\1\/\2/p' <<< $SDK_URL)
+        # Upload base only
+        cd ~/sdk/bin/packages/*/base
+        git init
+        git config user.name "bot"
+        git config user.email "bot@github.com"
+        git add .
+        git commit -m "$TAG$(TZ='Asia/Shanghai' date +@%Y%m%d)"
+        git push --force --quiet "https://$GITHUB_TOKEN@github.com/simonsmh/openwrt-dist.git" HEAD:$TAG
+  buildimg:
+    name: Build Openwrt Image
+    needs: buildpkg
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - PROFILE: asus_rt-ac58u
+          IB_URL: https://downloads.openwrt.org/releases/22.03.3/targets/ipq40xx/generic/openwrt-imagebuilder-22.03.3-ipq40xx-generic.Linux-x86_64.tar.xz
+          PACKAGES: ca-bundle ca-certificates block-mount usbutils coreutils coreutils-base64 curl iperf3 ip-full kmod-nft-tproxy kmod-usb-storage-extras kmod-usb-storage-uas kmod-fs-exfat kmod-fs-vfat kmod-fs-ntfs kmod-fs-ext4 kmod-ipt-nat6 kmod-tun dosfstools ntfs-3g e2fsprogs fdisk libmbedtls luci luci-app-wireguard luci-app-samba4 luci-app-shadowsocks luci-app-smartdns luci-app-dns-forwarder stubby luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn luci-i18n-opkg-zh-cn luci-i18n-samba4-zh-cn luci-i18n-smartdns-zh-cn mount-utils shadowsocks-libev smartdns uhttpd iperf3 mtr htop tmux nano lsblk luci-i18n-wol-zh-cn ethtool tcpdump wpad-wolfssl -wpad-basic-wolfssl dnsmasq-full -dnsmasq miniupnpd luci-app-upnp
+          INCLUDE_FILES: true
+        - PROFILE: asus_rt-ac58u.master
+          IB_URL: https://downloads.openwrt.org/releases/22.03.3/targets/ipq40xx/generic/openwrt-imagebuilder-22.03.3-ipq40xx-generic.Linux-x86_64.tar.xz
+          PACKAGES: ca-bundle ca-certificates luci luci-i18n-base-zh-cn wget curl luci-i18n-firewall-zh-cn wpad-wolfssl -wpad-basic-wolfssl coreutils-base64 lsblk fdisk tmux nano luci-i18n-wol-zh-cn openssh-client tcpdump iperf3 mtr iptables-mod-tproxy ip shadowsocks-libev luci-app-shadowsocks luci-app-chinadns stubby shadowsocks-libev-server kmod-fs-vfat kmod-fs-ext4 kmod-usb-storage-extras iptables-mod-iprange iptables-mod-hashlimit kmod-ipt-nat6 kmod-ip6tables-extra kmod-ip6-tunnel miniupnpd luci-app-upnp block-mount luci-app-wireguard
+          INCLUDE_FILES: false
+        - PROFILE: netgear_r6220.master
+          IB_URL: https://downloads.openwrt.org/releases/22.03.3/targets/ramips/mt7621/openwrt-imagebuilder-22.03.3-ramips-mt7621.Linux-x86_64.tar.xz
+          PACKAGES: ca-bundle ca-certificates luci luci-i18n-base-zh-cn wget curl luci-i18n-firewall-zh-cn wpad-wolfssl -wpad-basic-wolfssl coreutils-base64 lsblk fdisk tmux nano luci-i18n-wol-zh-cn openssh-client tcpdump iperf3 mtr iptables-mod-tproxy ip shadowsocks-libev luci-app-shadowsocks luci-app-chinadns stubby shadowsocks-libev-server kmod-fs-vfat kmod-fs-ext4 kmod-usb-storage-extras iptables-mod-iprange iptables-mod-hashlimit kmod-ipt-nat6 kmod-ip6tables-extra kmod-ip6-tunnel miniupnpd luci-app-upnp block-mount ndppd
+          INCLUDE_FILES: false
+        - PROFILE: netgear_r6220.relay
+          IB_URL: https://downloads.openwrt.org/releases/22.03.3/targets/ramips/mt7621/openwrt-imagebuilder-22.03.3-ramips-mt7621.Linux-x86_64.tar.xz
+          PACKAGES: ca-bundle ca-certificates luci luci-i18n-base-zh-cn wget curl luci-i18n-firewall-zh-cn wpad-wolfssl -wpad-basic-wolfssl coreutils-base64 lsblk fdisk tmux nano luci-i18n-wol-zh-cn openssh-client iperf3 mtr ip kmod-fs-vfat kmod-fs-ext4 kmod-usb-storage-extras block-mount
+          INCLUDE_FILES: false
+        - PROFILE: qihoo_c301
+          IB_URL: https://downloads.openwrt.org/releases/22.03.3/targets/ath79/generic/openwrt-imagebuilder-22.03.3-ath79-generic.Linux-x86_64.tar.xz
+          PACKAGES: ca-bundle ca-certificates curl luci luci-app-wireguard luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn luci-i18n-opkg-zh-cn uhttpd wpad-wolfssl -wpad-basic-wolfssl
+          INCLUDE_FILES: false
+        - PROFILE: qihoo_c301.relay
+          IB_URL: https://downloads.openwrt.org/releases/22.03.3/targets/ath79/generic/openwrt-imagebuilder-22.03.3-ath79-generic.Linux-x86_64.tar.xz
+          PACKAGES: ca-bundle ca-certificates luci luci-i18n-base-zh-cn wget curl luci-i18n-firewall-zh-cn wpad-wolfssl -wpad-basic-wolfssl coreutils-base64 lsblk fdisk tmux nano luci-i18n-wol-zh-cn openssh-client iperf3 mtr ip kmod-fs-vfat kmod-fs-ext4 kmod-usb-storage-extras block-mount
+          INCLUDE_FILES: false
+        - PROFILE: generic.x86_64
+          IB_URL: https://downloads.openwrt.org/releases/22.03.3/targets/x86/64/openwrt-imagebuilder-22.03.3-x86-64.Linux-x86_64.tar.xz
+          PACKAGES: ca-bundle ca-certificates block-mount usbutils coreutils coreutils-base64 curl iperf3 ip-full kmod-nft-tproxy ebtables kmod-ebtables-ipv6 kmod-usb-storage-extras kmod-usb-storage-uas kmod-fs-exfat kmod-fs-vfat kmod-fs-ntfs kmod-fs-ext4 kmod-ipt-nat6 kmod-tun dosfstools ntfs-3g e2fsprogs fdisk libmbedtls luci luci-compat luci-app-wireguard luci-app-samba4 luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn luci-i18n-opkg-zh-cn luci-i18n-samba4-zh-cn mount-utils uhttpd iperf3 mtr htop tmux nano lsblk luci-i18n-wol-zh-cn ethtool tcpdump dnsmasq-full -dnsmasq kmod-usb-net-rtl8152 kmod-usb-net-asix kmod-usb-net-asix-ax88179 mwan3 luci-app-mwan3 kmod-macvlan shadowsocks-libev luci-app-shadowsocks luci-app-openclash kmod-inet-diag openvpn-mbedtls luci-app-openvpn zerotier
+          INCLUDE_FILES: false
+        - PROFILE: d-team_newifi-d2.sun
+          IB_URL: https://downloads.openwrt.org/releases/22.03.3/targets/ramips/mt7621/openwrt-imagebuilder-22.03.3-ramips-mt7621.Linux-x86_64.tar.xz
+          PACKAGES: ca-bundle ca-certificates block-mount usbutils coreutils curl iperf3 ip-full kmod-nft-tproxy kmod-usb-storage-extras kmod-usb-storage-uas kmod-fs-exfat kmod-fs-vfat kmod-fs-ntfs kmod-ipt-nat6 kmod-tun ntfs-3g libmbedtls luci luci-app-wireguard luci-app-samba4 luci-app-shadowsocks luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn luci-i18n-opkg-zh-cn luci-i18n-samba4-zh-cn mount-utils shadowsocks-libev uhttpd mtr htop tmux nano luci-i18n-wol-zh-cn ethtool tcpdump wpad-wolfssl -wpad-basic-wolfssl dnsmasq-full -dnsmasq openvpn-mbedtls luci-app-openvpn zerotier
+          INCLUDE_FILES: true
+        - PROFILE: friendlyarm_nanopi-r2s
+          IB_URL: https://downloads.openwrt.org/releases/22.03.3/targets/rockchip/armv8/openwrt-imagebuilder-22.03.3-rockchip-armv8.Linux-x86_64.tar.xz
+          PACKAGES: ca-bundle ca-certificates block-mount usbutils curl iperf3 iperf3 mtr htop tmux nano lsblk ethtool tcpdump ip-full kmod-nft-tproxy kmod-usb-storage-extras kmod-fs-exfat kmod-fs-vfat kmod-fs-ntfs kmod-fs-ext4 kmod-ipt-nat6 kmod-tun dosfstools ntfs-3g e2fsprogs fdisk exfat-fsck exfat-mkfs libmbedtls luci luci-compat luci-app-openclash kmod-inet-diag libcap-bin luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn luci-i18n-opkg-zh-cn luci-i18n-ksmbd-zh-cn ksmbd-avahi-service wsdd2 luci-i18n-nlbwmon-zh-cn luci-i18n-aria2-zh-cn ariang luci-i18n-transmission-zh-cn transmission-web-control mount-utils uhttpd luci-i18n-wol-zh-cn dnsmasq-full -dnsmasq zerotier luci-i18n-statistics-zh-cn luci-i18n-ttyd-zh-cn collectd-mod-conntrack collectd-mod-dhcpleases collectd-mod-disk collectd-mod-interface collectd-mod-load collectd-mod-processes collectd-mod-thermal collectd-mod-dns collectd-mod-memory
+          INCLUDE_FILES: true
+        - PROFILE: netgear_r7800
+          IB_URL: https://downloads.openwrt.org/releases/22.03.3/targets/ipq806x/generic/openwrt-imagebuilder-22.03.3-ipq806x-generic.Linux-x86_64.tar.xz
+          PACKAGES: ca-bundle ca-certificates block-mount usbutils coreutils coreutils-base64 curl iperf3 ip-full kmod-nft-tproxy kmod-usb-storage-extras kmod-usb-storage-uas kmod-fs-exfat kmod-fs-vfat kmod-fs-ntfs kmod-fs-ext4 kmod-ipt-nat6 kmod-tun dosfstools ntfs-3g e2fsprogs fdisk libmbedtls luci luci-app-wireguard luci-app-samba4 luci-app-shadowsocks luci-app-smartdns luci-app-dns-forwarder luci-app-openclash kmod-inet-diag stubby luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn luci-i18n-opkg-zh-cn luci-i18n-samba4-zh-cn luci-i18n-smartdns-zh-cn mount-utils shadowsocks-libev smartdns uhttpd iperf3 mtr htop tmux nano lsblk luci-i18n-wol-zh-cn ethtool tcpdump wpad-wolfssl -wpad-basic-wolfssl dnsmasq-full -dnsmasq
+          INCLUDE_FILES: true 
+    steps:
+    - uses: actions/checkout@master
+    - name: Env for Openwrt ImageBuilder
+      run: sudo apt install -y libncurses-dev
+    - name: Download Openwrt ImageBuilder
+      env:
+        IB_URL: ${{ matrix.IB_URL }}
+      run: |
+        wget $IB_URL
+        tar xf $(basename $IB_URL)
+    - name: Fetch Files
+      env:
+        IB_URL: ${{ matrix.IB_URL }}
+      if: matrix.INCLUDE_FILES
+      run: |
+        IB_HOME=$(basename $IB_URL|head -c -8)
+        TAG=$(sed -n 's/.*targets\/\(\w*\)\/\(\w*\)\/.*/packages\/\1\/\2/p' <<< $IB_URL)
+        cd $IB_HOME
+        mkdir -p files/root/
+        mkdir -p files/etc/opkg/
+        mkdir -p files/etc/smartdns/
+        cp ../simonsmh-dist.pub files/root/
+        wget https://github.com/SYHGroup/easy_shell/raw/master/ddns/CloudFlare-ddns.sh -O files/root/CloudFlare-ddns.sh
+        wget https://github.com/SYHGroup/easy_shell/raw/master/sss/update_list -O files/root/update_list
+        cat files/root/update_list | sed "s/\/etc/files\/etc/g" | bash
+        wget https://gist.githubusercontent.com/simonsmh/2a609e0c801acabc2e1d7733432bce4c/raw/blacklist-ip.conf -O files/etc/smartdns/blacklist-ip.conf
+        echo "src/gz simonsmh https://cdn.jsdelivr.net/gh/simonsmh/openwrt-dist@$TAG" > files/etc/opkg/customfeeds.conf
+    - name: Build Image
+      shell: bash
+      env:
+        PROFILE: ${{ matrix.PROFILE }}
+        IB_URL: ${{ matrix.IB_URL }}
+        PACKAGES: ${{ matrix.PACKAGES }}
+      run: |
+        IB_HOME=$(basename $IB_URL|head -c -8)
+        TAG=$(sed -n 's/.*targets\/\(\w*\)\/\(\w*\)\/.*/packages\/\1\/\2/p' <<< $IB_URL)
+        cd $IB_HOME
+        sed -i "/check_signature/d" repositories.conf
+        echo "src/gz simonsmh https://github.com/simonsmh/openwrt-dist/raw/$TAG" >> repositories.conf
+        makeopts=("PROFILE=${PROFILE%.*}" "PACKAGES=$PACKAGES")
+        [[ -d files ]] && makeopts+=("FILES=files/")
+        make info
+        TERM=xterm-256color make image "${makeopts[@]}"
+    - name: Upload
+      id: upload
+      env:
+        PROFILE: ${{ matrix.PROFILE }}
+        IB_URL: ${{ matrix.IB_URL }}
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
+      run: |
+        IB_HOME=$(basename $IB_URL|head -c -8)
+        TAG=$(sed -n 's/.*targets\/\(\w*\)\/\(\w*\)\/.*/packages\/\1\/\2/p' <<< $IB_URL)
+        # Prepare Release
+        ARTIFACTPATH="$(pwd)/image"
+        mkdir -p $ARTIFACTPATH
+        # Upload image
+        cd $IB_HOME/bin/targets/$(cut -b 10- <<< $TAG)
+        cp * $ARTIFACTPATH
+        git init
+        git config user.name "bot"
+        git config user.email "bot@github.com"
+        git add .
+        git commit -m "$PROFILE$(TZ='Asia/Shanghai' date +@%Y%m%d)"
+        git push --force --quiet "https://$GITHUB_TOKEN@github.com/simonsmh/openwrt-dist.git" HEAD:image/$PROFILE
+    - uses: actions/upload-artifact@v2
+      with:
+        name: image_${{ matrix.PROFILE }}
+        path: ./image
