@@ -44,24 +44,24 @@ jobs:
         cd ~/sdk
         # enable all packages
         echo 'CONFIG_PACKAGE_luci-app-ssr-plus=m' >> .config
-        echo '# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks_NONE_Client is not set' >> .config
-        echo 'CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks_Libev_Client=y' >> .config
+        echo 'CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks_NONE_Client=y' >> .config
+        echo '# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks_Libev_Client is not set' >> .config
         echo '# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks_Rust_Client is not set' >> .config
-        echo '# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks_NONE_Server is not set' >> .config
-        echo 'CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks_Libev_Server=y' >> .config
+        echo 'CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks_NONE_Server=y' >> .config
+        echo '# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks_Libev_Server is not set' >> .config
         echo '# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks_Rust_Server is not set' >> .config
-        echo '# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_NONE_V2RAY is not set' >> .config
+        echo 'CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_NONE_V2RAY=y' >> .config
         echo '# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray is not set' >> .config
-        echo 'CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Xray=y' >> .config
+        echo '# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Xray is not set' >> .config
         echo '# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_SagerNet_Core is not set' >> .config
         echo 'CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ChinaDNS_NG=y' >> .config
-        echo 'CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Hysteria=y' >> .config
-        echo 'CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_IPT2Socks=y' >> .config
-        echo 'CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Kcptun=y' >> .config
-        echo 'CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_NaiveProxy=y' >> .config
-        echo 'CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Redsocks2=y' >> .config
-        echo 'CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks_Simple_Obfs=y' >> .config
-        echo 'CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks_V2ray_Plugin=y' >> .config
+        echo '# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Hysteria is not set' >> .config
+        echo '# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_IPT2Socks is not set' >> .config
+        echo '# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Kcptun is not set' >> .config
+        echo '# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_NaiveProxy is not set' >> .config
+        echo '# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Redsocks2 is not set' >> .config
+        echo '# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks_Simple_Obfs is not set' >> .config
+        echo '# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks_V2ray_Plugin is not set' >> .config
         echo 'CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Libev_Client=y' >> .config
         echo 'CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Libev_Server=y' >> .config
         echo 'CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Trojan=y' >> .config
