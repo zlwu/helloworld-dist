@@ -13,13 +13,13 @@ jobs:
       fail-fast: false
       matrix:
         SDK_URL:
-        #- https://downloads.openwrt.org/releases/22.03.3/targets/ipq806x/generic/openwrt-sdk-22.03.3-ipq806x-generic_gcc-11.2.0_musl_eabi.Linux-x86_64.tar.xz
-        #- https://downloads.openwrt.org/releases/22.03.3/targets/ipq40xx/generic/openwrt-sdk-22.03.3-ipq40xx-generic_gcc-11.2.0_musl_eabi.Linux-x86_64.tar.xz
-        #- https://downloads.openwrt.org/releases/22.03.3/targets/ramips/mt7621/openwrt-sdk-22.03.3-ramips-mt7621_gcc-11.2.0_musl.Linux-x86_64.tar.xz
-        #- https://downloads.openwrt.org/releases/22.03.3/targets/ath79/generic/openwrt-sdk-22.03.3-ath79-generic_gcc-11.2.0_musl.Linux-x86_64.tar.xz
-        #- https://downloads.openwrt.org/releases/22.03.3/targets/ath79/nand/openwrt-sdk-22.03.3-ath79-nand_gcc-11.2.0_musl.Linux-x86_64.tar.xz
-        - https://downloads.openwrt.org/releases/22.03.3/targets/x86/64/openwrt-sdk-22.03.3-x86-64_gcc-11.2.0_musl.Linux-x86_64.tar.xz
-        - https://downloads.openwrt.org/releases/22.03.3/targets/rockchip/armv8/openwrt-sdk-22.03.3-rockchip-armv8_gcc-11.2.0_musl.Linux-x86_64.tar.xz
+        #- https://downloads.openwrt.org/releases/23.05.0/targets/ipq806x/generic/openwrt-sdk-23.05.0-ipq806x-generic_gcc-12.3.0_musl_eabi.Linux-x86_64.tar.xz
+        #- https://downloads.openwrt.org/releases/23.05.0/targets/ipq40xx/generic/openwrt-sdk-23.05.0-ipq40xx-generic_gcc-12.3.0_musl_eabi.Linux-x86_64.tar.xz
+        #- https://downloads.openwrt.org/releases/23.05.0/targets/ramips/mt7621/openwrt-sdk-23.05.0-ramips-mt7621_gcc-12.3.0_musl.Linux-x86_64.tar.xz
+        #- https://downloads.openwrt.org/releases/23.05.0/targets/ath79/generic/openwrt-sdk-23.05.0-ath79-generic_gcc-12.3.0_musl.Linux-x86_64.tar.xz
+        #- https://downloads.openwrt.org/releases/23.05.0/targets/ath79/nand/openwrt-sdk-23.05.0-ath79-nand_gcc-12.3.0_musl.Linux-x86_64.tar.xz
+        - https://downloads.openwrt.org/releases/23.05.0/targets/x86/64/openwrt-sdk-23.05.0-x86-64_gcc-12.3.0_musl.Linux-x86_64.tar.xz
+        - https://downloads.openwrt.org/releases/23.05.0/targets/rockchip/armv8/openwrt-sdk-23.05.0-rockchip-armv8_gcc-12.3.0_musl.Linux-x86_64.tar.xz
     steps:
     - uses: actions/checkout@master
     - name: Env for Openwrt SDK
