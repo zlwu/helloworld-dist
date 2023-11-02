@@ -1,0 +1,257 @@
+Package: chinadns-ng
+Version: 2023.10.28-1
+Depends: libc, ipset
+Source: feeds/ssrp/chinadns-ng
+SourceName: chinadns-ng
+License: AGPL-3.0-only
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1698864318
+Maintainer: pexcn <i@pexcn.me>
+Architecture: aarch64_generic
+Installed-Size: 28095
+Filename: chinadns-ng_2023.10.28-1_aarch64_generic.ipk
+Size: 28884
+SHA256sum: 6bdaeef18bb3e1db9875bacb5c7ed58f38328e618f66a75ac8f3700af9e1c8dc
+Description:  ChinaDNS next generation, refactoring with epoll and ipset.
+
+Package: dns2socks
+Version: 2.1-2
+Depends: libc, libpthread
+Source: feeds/ssrp/dns2socks
+SourceName: dns2socks
+License: BSD-3-Clause
+Section: net
+SourceDateEpoch: 1698864318
+Maintainer: ghostmaker
+Architecture: aarch64_generic
+Installed-Size: 11094
+Filename: dns2socks_2.1-2_aarch64_generic.ipk
+Size: 11890
+SHA256sum: 89fbae15fd53952d9032d08380226e4f1eb103d04d815867629bac0f00b1dfb9
+Description:  This is a command line utility to resolve DNS requests via
+ a SOCKS tunnel like Tor or a HTTP proxy.
+
+Package: dns2tcp
+Version: 1.1.0-1
+Depends: libc
+Source: feeds/ssrp/dns2tcp
+SourceName: dns2tcp
+License: AGPL-3.0-only
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1698864318
+Maintainer: Tianling Shen <cnsztl@immortalwrt.org>
+Architecture: aarch64_generic
+Installed-Size: 11935
+Filename: dns2tcp_1.1.0-1_aarch64_generic.ipk
+Size: 12700
+SHA256sum: 13e7d731abd5f8b7ddd3d59860ae55d3f6c94a77d76edd77e0161df7b6d515dc
+Description:  utility to convert dns query from udp to tcp
+
+Package: ipt2socks
+Version: 1.1.3-3
+Depends: libc, libpthread
+Source: feeds/ssrp/ipt2socks
+SourceName: ipt2socks
+License: AGPL-3.0
+Section: net
+SourceDateEpoch: 1698864318
+Architecture: aarch64_generic
+Installed-Size: 26496
+Filename: ipt2socks_1.1.3-3_aarch64_generic.ipk
+Size: 27215
+SHA256sum: 06ef367a99684ddced6e1f70fc989467d736a280f0b2fec9c4cba8434fb730f4
+Description:  Utility for converting iptables (redirect/tproxy) to socks5.
+
+Package: lua-neturl
+Version: 1.1-1-3
+Depends: libc, lua
+Source: feeds/ssrp/lua-neturl
+SourceName: lua-neturl
+License: MIT
+Section: lang
+SourceDateEpoch: 1698864318
+Maintainer: Tianling Shen <cnsztl@immortalwrt.org>
+Architecture: all
+Installed-Size: 4533
+Filename: lua-neturl_1.1-1-3_all.ipk
+Size: 5313
+SHA256sum: 7b550999a1664c47153618362064bd470adefe446991c2f7b4eae15398fd41a2
+Description:  This small Lua library provides a few functions to parse URL with
+ querystring and build new URL easily.
+
+Package: luci-app-ssr-plus
+Version: 188
+Depends: libc, coreutils, coreutils-base64, dns2socks, dns2tcp, dnsmasq-full, ipset, kmod-ipt-nat, ip-full, iptables, iptables-mod-tproxy, lua, lua-neturl, libuci-lua, microsocks, tcping, resolveip, shadowsocksr-libev-ssr-check, uclient-fetch, chinadns-ng, tuic-client, ipt2socks, shadowsocksr-libev-ssr-local, shadowsocksr-libev-ssr-redir, shadowsocksr-libev-ssr-server, trojan
+Source: feeds/ssrp/luci-app-ssr-plus
+SourceName: luci-app-ssr-plus
+Section: luci
+SourceDateEpoch: 1698864318
+Maintainer: OpenWrt LuCI community
+Architecture: all
+Installed-Size: 276372
+Filename: luci-app-ssr-plus_188_all.ipk
+Size: 276634
+SHA256sum: 69f434331d51639e50ccec57968f40df1b0933c6c73294da845ad7c416fad6ed
+Description:  SS/SSR/V2Ray/Trojan/NaiveProxy/Tuic/ShadowTLS/Hysteria/Socks5/Tun LuCI interface
+
+Package: luci-i18n-ssr-plus-zh-cn
+Version: git-23.305.67518-1d6b0ba
+Depends: libc, luci-app-ssr-plus
+Source: feeds/ssrp/luci-app-ssr-plus
+SourceName: luci-i18n-ssr-plus-zh-cn
+Section: luci
+SourceDateEpoch: 1698864318
+Architecture: all
+Installed-Size: 7087
+Filename: luci-i18n-ssr-plus-zh-cn_git-23.305.67518-1d6b0ba_all.ipk
+Size: 7959
+SHA256sum: 253aec0c300199416925e46d6716dcd56c4a3cec9c5238e19d64195b7f5125c9
+Description:  Translation for luci-app-ssr-plus - 简体中文 (Chinese Simplified)
+
+Package: microsocks
+Version: 1.0.3-1
+Depends: libc, libpthread
+Source: feeds/ssrp/microsocks
+SourceName: microsocks
+License: MIT
+LicenseFiles: COPYING
+Section: net
+SourceDateEpoch: 1698864318
+Maintainer: lean
+Architecture: aarch64_generic
+Installed-Size: 5766
+Filename: microsocks_1.0.3-1_aarch64_generic.ipk
+Size: 6548
+SHA256sum: d5922b9affde0f34d06136dc980239c852f87d4b81daef2bd37a378cdccbcb00
+Description:  A SOCKS5 service that you can run on your remote boxes to tunnel connections
+ through them, if for some reason SSH doesn't cut it for you.
+
+Package: shadowsocksr-libev-ssr-check
+Version: 2.5.6-9
+Depends: libc, libev, libsodium, libopenssl1.1, libpthread, libpcre, libudns, zlib
+Source: feeds/ssrp/shadowsocksr-libev
+SourceName: shadowsocksr-libev-ssr-check
+License: GPL-3.0
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1698864318
+Architecture: aarch64_generic
+Installed-Size: 2574
+Filename: shadowsocksr-libev-ssr-check_2.5.6-9_aarch64_generic.ipk
+Size: 3295
+SHA256sum: 1b9cbb33dd223247c6b5ec8c4c4b0f753abea4396e74d713f5ef58ceced2251e
+Description:  shadowsocksr-libev ssr-check
+
+Package: shadowsocksr-libev-ssr-local
+Version: 2.5.6-9
+Depends: libc, libev, libsodium, libopenssl1.1, libpthread, libpcre, libudns, zlib
+Source: feeds/ssrp/shadowsocksr-libev
+SourceName: shadowsocksr-libev-ssr-local
+License: GPL-3.0
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1698864318
+Architecture: aarch64_generic
+Installed-Size: 62619
+Filename: shadowsocksr-libev-ssr-local_2.5.6-9_aarch64_generic.ipk
+Size: 63391
+SHA256sum: 9d9ac43071e17829c8f9b1412fdac05b66ffa72ac23ed45e165203d5122f4ff2
+Description:  shadowsocksr-libev ssr-local
+
+Package: shadowsocksr-libev-ssr-nat
+Version: 2.5.6-9
+Depends: libc, libev, libsodium, libopenssl1.1, libpthread, libpcre, libudns, zlib
+Source: feeds/ssrp/shadowsocksr-libev
+SourceName: shadowsocksr-libev-ssr-nat
+License: GPL-3.0
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1698864318
+Architecture: aarch64_generic
+Installed-Size: 2229
+Filename: shadowsocksr-libev-ssr-nat_2.5.6-9_aarch64_generic.ipk
+Size: 2975
+SHA256sum: 4964c4334fb42c5f7590d38f4fb756109a821fbbbe4cb6598a1ae6ddf7fcbc9d
+Description:  shadowsocksr-libev ssr-nat
+
+Package: shadowsocksr-libev-ssr-redir
+Version: 2.5.6-9
+Depends: libc, libev, libsodium, libopenssl1.1, libpthread, libpcre, libudns, zlib
+Source: feeds/ssrp/shadowsocksr-libev
+SourceName: shadowsocksr-libev-ssr-redir
+License: GPL-3.0
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1698864318
+Architecture: aarch64_generic
+Installed-Size: 56280
+Filename: shadowsocksr-libev-ssr-redir_2.5.6-9_aarch64_generic.ipk
+Size: 56991
+SHA256sum: 968a2b7898c50260d2cbc7e4cafdcc76f744351ef96aa220809b0aa82ea90780
+Description:  shadowsocksr-libev ssr-redir
+
+Package: shadowsocksr-libev-ssr-server
+Version: 2.5.6-9
+Depends: libc, libev, libsodium, libopenssl1.1, libpthread, libpcre, libudns, zlib
+Source: feeds/ssrp/shadowsocksr-libev
+SourceName: shadowsocksr-libev-ssr-server
+License: GPL-3.0
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1698864318
+Architecture: aarch64_generic
+Installed-Size: 66057
+Filename: shadowsocksr-libev-ssr-server_2.5.6-9_aarch64_generic.ipk
+Size: 66774
+SHA256sum: 6e69f9b5e42b8f6b0aa417423269868dc112e35324c2abbb44a5cff44e52b84f
+Description:  shadowsocksr-libev ssr-server
+
+Package: tcping
+Version: 0.3-1
+Depends: libc
+Source: feeds/ssrp/tcping
+SourceName: tcping
+License: GPL-2.0-only
+Section: net
+SourceDateEpoch: 1698864318
+Architecture: aarch64_generic
+Installed-Size: 3791
+Filename: tcping_0.3-1_aarch64_generic.ipk
+Size: 4474
+SHA256sum: 7ecd9d52505f4402d42b719d8a2f556e0fd4248077dbe688aeea150f8ad8a3b2
+Description:  tcping measures the latency of a tcp-connection
+
+Package: trojan
+Version: 1.16.0-2
+Depends: libc, libpthread, libstdcpp6, libopenssl1.1, boost, boost-system, boost-program_options, boost-date_time
+Source: feeds/ssrp/trojan
+SourceName: trojan
+License: GPL-3.0
+Section: net
+SourceDateEpoch: 1698864318
+Maintainer: GreaterFire
+Architecture: aarch64_generic
+Installed-Size: 306681
+Filename: trojan_1.16.0-2_aarch64_generic.ipk
+Size: 307465
+SHA256sum: 0016254f4a1fbd04443c94eacc6065691da277cd8fcfcb83e3da2a74bf4c0044
+Description:  An unidentifiable mechanism that helps you bypass GFW
+
+Package: tuic-client
+Version: 1.0.0-1
+Depends: libc
+Source: feeds/ssrp/tuic-client
+SourceName: tuic-client
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1698864318
+Maintainer: Tianling Shen <cnsztl@immortalwrt.org>
+Architecture: aarch64_generic
+Installed-Size: 1044944
+Filename: tuic-client_1.0.0-1_aarch64_generic.ipk
+Size: 1043127
+SHA256sum: 0f4b345a7c00b6a75ced4ecd70daa922b84c51125a5a47b07d6a20713c9971e1
+Description:  Delicately-TUICed 0-RTT proxy protocol
+
